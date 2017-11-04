@@ -48,7 +48,7 @@ class SpeechRecognizer(object):
         if self.listening:
             self.audio_queue.put(audio)
 
-    def recognize(self, dialog=None, timeout=10000):
+    def recognize(self, dialog=None, timeout=10000): #监听声音
         """
         语音识别
         :param dialog:会话ID
@@ -62,18 +62,18 @@ class SpeechRecognizer(object):
         self.audio_queue.queue.clear()
         self.listening = True
 
-        self.dueros.state_listener.on_listening()
+        self.dueros.state_listener.on_listening() #打印正在监听，就是个回调
 
         def on_finished():
             self.dueros.state_listener.on_finished()
 
-            if self.dueros.audio_player.state == 'PAUSED':
+            if self.dueros.audio_player.state == 'PAUSED':  #就是Play类中的状态
                 self.dueros.audio_player.resume()
 
-        # Stop playing if Xiaoduxiaodu is speaking or AudioPlayer is playing
-        if self.dueros.speech_synthesizer.state == 'PLAYING':
+        # Stop playing if Xiaoduxiaodu is speaking or AudioPlayer is playing  此时已经是xiaoduxiaodu已经说了
+        if self.dueros.speech_synthesizer.state == 'PLAYING':  #合成了云下来的语音，正在上传已经在播放，我也不知道在哪改的
             self.dueros.speech_synthesizer.stop()
-        elif self.dueros.audio_player.state == 'PLAYING':
+        elif self.dueros.audio_player.state == 'PLAYING':  #合成了云下路的音乐信息，正在播放音乐
             self.dueros.audio_player.pause()
 
         self.dialog_request_id = dialog if dialog else uuid.uuid4().hex

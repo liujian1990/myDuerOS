@@ -8,6 +8,7 @@ from sdk.dueros_core import DuerOS
 from app.framework.mic import Audio
 from app.framework.player import Player
 from app.utils.prompt_tone import PromptTone
+from aip import AipSpeech
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,10 +34,10 @@ def main():
 
     audio.link(dueros)
 
-    dueros.start()
-    audio.start()
+    dueros.start() #主线程
+    audio.start()  #开始录音，应该是流开始把
 
-    prompt_tone_player = PromptTone(player)
+    prompt_tone_player = PromptTone(player) #设置来电铃声，放到播放器
 
     while True:
         try:
@@ -46,8 +47,8 @@ def main():
             except SyntaxError:
                 pass
             # 唤醒态提示音
-            prompt_tone_player.play()
-            dueros.listen()
+            prompt_tone_player.play()  #播放提示音
+            dueros.listen()      #监听
         except KeyboardInterrupt:
             break
 

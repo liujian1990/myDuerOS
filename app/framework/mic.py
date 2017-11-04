@@ -39,7 +39,7 @@ class Audio(object):
 
             if device_index is None:
                 raise Exception('Can not find an input device with {} channel(s)'.format(channels))
-
+        # 打开数据流
         self.stream = self.pyaudio_instance.open(
             start=False,
             format=pyaudio.paInt16,
@@ -96,7 +96,7 @@ class Audio(object):
         :return:
         '''
         for sink in self.sinks:
-            sink.put(in_data)
+            sink.put(in_data)  #一直个 DuerOS类传数据，调用了dueros.put
         return None, pyaudio.paContinue
 
 

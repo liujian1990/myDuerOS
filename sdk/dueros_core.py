@@ -87,7 +87,7 @@ class DuerOS(object):
         :param player:播放器
         '''
         self.event_queue = queue.Queue()
-        self.speech_recognizer = SpeechRecognizer(self)
+        self.speech_recognizer = SpeechRecognizer(self) #处理mic类的数据
         self.speech_synthesizer = SpeechSynthesizer(self, player)
         self.audio_player = AudioPlayer(self, player)
         self.speaker = Speaker(self)
@@ -97,7 +97,7 @@ class DuerOS(object):
         self.state_listener = DuerOSStateListner()
 
         # handle audio to speech recognizer
-        self.put = self.speech_recognizer.put
+        self.put = self.speech_recognizer.put #被mic类不断的放数据
 
         # listen() will trigger SpeechRecognizer's Recognize event
         self.listen = self.speech_recognizer.recognize
