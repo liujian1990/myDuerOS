@@ -8,7 +8,6 @@ from sdk.dueros_core import DuerOS
 from app.framework.mic import Audio
 from app.framework.player import Player
 from app.utils.prompt_tone import PromptTone
-from aip import AipSpeech
 import json
 logging.basicConfig(level=logging.ERROR)
 
