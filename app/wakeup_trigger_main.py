@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 """
-通过[小度小度]触发进入唤醒状态
+通过[小多小多]触发进入唤醒状态
 
 """
 import threading
@@ -182,9 +182,10 @@ def main():
     dueros = DuerOS(player)
     dueros.set_directive_listener(directive_listener)
 
-    # [小度小度] SnowBoy唤醒引擎
-    model = 'app/snowboy/xiaoduxiaodu_all_10022017.umdl'
-    # SnowBoy唤醒引擎实体
+    # [小多小多] SnowBoy唤醒引擎
+   # model = 'app/snowboy/xiaoduxiaodu_all_10022017.umdl'
+    model = 'app/snowboy/xiaoduoxiaoduo_lj.pmdl'
+    # SnowBoy：唤醒引擎实体
     snowboy = SnowBoy(model)
 
     audio.link(wakeup_engine)

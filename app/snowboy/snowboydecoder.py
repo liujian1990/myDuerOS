@@ -74,10 +74,10 @@ class HotwordDetector(object):
                  sensitivity=[],
                  audio_gain=1):
 
-        # def audio_callback(in_data, frame_count, time_info, status):
-        #     self.ring_buffer.extend(in_data)
-        #     play_data = chr(0) * len(in_data)
-        #     return play_data, pyaudio.paContinue
+        def audio_callback(in_data, frame_count, time_info, status):
+            self.ring_buffer.extend(in_data)
+            play_data = chr(0) * len(in_data)
+            return play_data, pyaudio.paContinue
 
         tm = type(decoder_model)
         ts = type(sensitivity)
@@ -91,34 +91,31 @@ class HotwordDetector(object):
             resource_filename=resource.encode(), model_str=model_str.encode())
         self.detector.SetAudioGain(audio_gain)
         self.num_hotwords = self.detector.NumHotwords()
-        self.detector.ApplyFrontend(True)
 
         if len(decoder_model) > 1 and len(sensitivity) == 1:
             sensitivity = sensitivity*self.num_hotwords
-        #if len(sensitivity) != 0:
-        #    assert self.num_hotwords == len(sensitivity), \
-        #        "number of hotwords in decoder_model (%d) and sensitivity " \
-        #        "(%d) does not match" % (self.num_hotwords, len(sensitivity))
+        if len(sensitivity) != 0:
+            assert self.num_hotwords == len(sensitivity), \
+                "number of hotwords in decoder_model (%d) and sensitivity " \
+                "(%d) does not match" % (self.num_hotwords, len(sensitivity))
         sensitivity_str = ",".join([str(t) for t in sensitivity])
         if len(sensitivity) != 0:
-            self.detector.SetSensitivity('0.35, 0.35, 0.45')
+            self.detector.SetSensitivity(sensitivity_str.encode())
 
         self.ring_buffer = RingBuffer(
             self.detector.NumChannels() * self.detector.SampleRate() * 5)
-
-        # self.audio = pyaudio.PyAudio()
-        # self.stream_in = self.audio.open(
-        #     input=True, output=False,
-        #     format=self.audio.get_format_from_width(
-        #         self.detector.BitsPerSample() / 8),
-        #     channels=self.detector.NumChannels(),
-        #     rate=self.detector.SampleRate(),
-        #     frames_per_buffer=2048,
-        #     stream_callback=audio_callback)
+#        self.audio = pyaudio.PyAudio()
+#        self.stream_in = self.audio.open(
+#            input=True, output=False,
+#            format=self.audio.get_format_from_width(
+#                self.detector.BitsPerSample() / 8),
+#            channels=self.detector.NumChannels(),
+#            rate=self.detector.SampleRate(),
+#            frames_per_buffer=2048,
+#            stream_callback=audio_callback)
 
     def feed_data(self, data):
         self.ring_buffer.extend(data)
-
 
     def start(self, detected_callback=play_audio_file,
               interrupt_check=lambda: False,
@@ -183,6 +180,7 @@ class HotwordDetector(object):
         Terminate audio stream. Users cannot call start() again to detect.
         :return: None
         """
-        self.stream_in.stop_stream()
-        self.stream_in.close()
-        self.audio.terminate()
+#        self.stream_in.stop_stream()
+#        self.stream_in.close()
+#        self.audio.terminate()
+	pass
