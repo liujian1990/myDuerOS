@@ -6,7 +6,7 @@
 """
 import threading
 import time
-
+import json
 try:
     import Queue as queue
 except ImportError:
@@ -168,7 +168,8 @@ def directive_listener(directive_content):
     '''
     content = u'云端下发directive:%s' % (directive_content)
     logging.info(content)
-
+    print '[DerOS 网络数据]云端下发directive:'
+    print json.dumps(directive_content, sort_keys=True, indent=4, separators=(',', ': '))
 
 def main():
     # 创建录音设备(平台相关)

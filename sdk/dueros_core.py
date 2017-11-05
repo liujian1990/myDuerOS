@@ -265,6 +265,7 @@ class DuerOS(object):
             json_part += json.dumps(metadata)
 
             conn.send(json_part.encode('utf-8'), final=False, stream_id=stream_id)
+            print "[DuerOS-send-1]:", json.dumps(metadata, sort_keys=True, indent=4, separators=(',', ': '))
 
             if attachment:
                 attachment_header = '\r\n--{}\r\n'.format(eventchannel_boundary)
@@ -275,6 +276,8 @@ class DuerOS(object):
                 # AVS_AUDIO_CHUNK_PREFERENCE = 320
                 for chunk in attachment:
                     conn.send(chunk, final=False, stream_id=stream_id)
+                    print "[DuerOS-send-2]:chunk" #chunk
+
                     # print '===============send(attachment.chunk)'
 
                     # check if StopCapture directive is received
@@ -289,6 +292,7 @@ class DuerOS(object):
 
             end_part = '\r\n--{}--'.format(eventchannel_boundary)
             conn.send(end_part.encode('utf-8'), final=True, stream_id=stream_id)
+            print "[DuerOS-send-3]:",end_part
 
             logger.info("wait for response")
             resp = conn.get_response(stream_id)
