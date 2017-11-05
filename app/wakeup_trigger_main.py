@@ -20,7 +20,7 @@ from app.framework.mic import Audio
 from app.snowboy import snowboydecoder
 from app.utils.prompt_tone import PromptTone
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 
 
 class SnowBoy(object):

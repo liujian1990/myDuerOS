@@ -9,8 +9,8 @@ from app.framework.mic import Audio
 from app.framework.player import Player
 from app.utils.prompt_tone import PromptTone
 from aip import AipSpeech
-
-logging.basicConfig(level=logging.INFO)
+import json
+logging.basicConfig(level=logging.ERROR)
 
 
 def directive_listener(directive_content):
@@ -21,7 +21,8 @@ def directive_listener(directive_content):
     '''
     content = u'云端下发directive:%s' % (directive_content)
     logging.info(content)
-
+    print '[DerOS 网络数据]云端下发directive:'
+    print json.dumps(directive_content, sort_keys=True, indent=4, separators=(',', ': '))
 
 def main():
     # 创建录音设备（平台相关）

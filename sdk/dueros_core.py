@@ -31,7 +31,7 @@ from sdk.interface.speech_synthesizer import SpeechSynthesizer
 from sdk.interface.system import System
 import sdk.configurate
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 
@@ -49,6 +49,8 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在倾听..........')
+        print ('DuerOS状态]正在倾听..........')
+
 
     def on_thinking(self):
         '''
@@ -56,6 +58,7 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在思考.........')
+        print ('[DuerOS状态]正在思考.........')
 
     def on_speaking(self):
         '''
@@ -63,6 +66,8 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在播放........')
+        print ('[DuerOS状态]正在播放........')
+
 
     def on_finished(self):
         '''
@@ -70,6 +75,8 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]结束')
+        print ('[DuerOS状态]结束')
+
 
 
 class DuerOS(object):
