@@ -12,9 +12,9 @@ import datetime
 
 import sdk.configurate as configurate
 
-# 开发者默认注册信息
-CLIENT_ID = "5GFgMRfHOhIvI0B8AZB78nt676FeWA9n"
-CLIENT_SECRET = "eq2eCNfbtOrGwdlA4vB1N1EaiwjBMu7i"
+# 开发者默认注册信息,零号机
+CLIENT_ID = "6DFOb0hwY1qaLBY5o1mTj8AoTmRCYoZc"
+CLIENT_SECRET = "DFFsiQzVSmBOXyUrUg9k5LXqKYGDkhw"
 
 # 百度token服务器url
 TOKEN_URL = 'https://openapi.baidu.com/oauth/2.0/token'
