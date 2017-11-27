@@ -457,7 +457,8 @@ class DuerOS(object):
             name = self.__name_convert(name)
             if hasattr(self, namespace):
                 interface = getattr(self, namespace)
-                directive_func = getattr(interface, name, None)
+                if type(name) == str:
+                    directive_func = getattr(interface, name, None)
                 if directive_func:
                     directive_func(directive)
                 else:
@@ -616,3 +617,5 @@ class DuerOS(object):
             return 'set_end_point'
         elif name == 'ThrowException':
             return 'throw_exception'
+        else:
+            return ''
