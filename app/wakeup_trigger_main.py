@@ -34,7 +34,7 @@ class SnowBoy(object):
         :param model:唤醒词训练模型
         '''
         self.calback = None
-        self.detector = snowboydecoder.HotwordDetector(model, sensitivity=0.5, audio_gain=1)
+        self.detector = snowboydecoder.HotwordDetector(model, sensitivity=0.4, audio_gain=1)  #
 
     def feed_data(self, data):
         '''
@@ -183,9 +183,10 @@ def main():
     dueros.set_directive_listener(directive_listener)
 
     # [小多小多] SnowBoy唤醒引擎
-   # model = 'app/snowboy/xiaoduxiaodu_all_10022017.umdl'
-    model = 'app/snowboy/xiaoduoxiaoduo_lj.pmdl'
-    # SnowBoy：唤醒引擎实体
+    model = 'app/snowboy/xiaoduxiaodu_all_10022017.umdl'
+    #model = 'app/snowboy/xiaoduoxiaoduo_lj.pmdl'
+    # SnowBoy：
+    # 唤醒引擎实体
     snowboy = SnowBoy(model)
 
     audio.link(wakeup_engine)
