@@ -2,6 +2,11 @@
 import pyaudio
 import logging
 
+import app.app_config as app_config
+import wave
+import time
+import control
+logging.basicConfig(level=app_config.LOGGER_LEVEL)
 logger = logging.getLogger(__file__)
 
 
@@ -10,7 +15,7 @@ class Audio(object):
     录音类(基于pyaudio)
     '''
 
-    def __init__(self, rate=16000, frames_size=None, channels=None, device_index=2):
+    def __init__(self, rate=16000, frames_size=None, channels=None, device_index=None):
         '''
         录音类初始化
         :param rate:采样率
@@ -23,6 +28,10 @@ class Audio(object):
         self.channels = channels if channels else 1
 
         self.pyaudio_instance = pyaudio.PyAudio()
+
+        self.record=False
+        self.recorddata=[]
+        self.ctl=control.control()
 
         if device_index is None:
             if channels:
@@ -39,7 +48,7 @@ class Audio(object):
 
             if device_index is None:
                 raise Exception('Can not find an input device with {} channel(s)'.format(channels))
-        # 打开数据流
+
         self.stream = self.pyaudio_instance.open(
             start=False,
             format=pyaudio.paInt16,
@@ -96,7 +105,24 @@ class Audio(object):
         :return:
         '''
         for sink in self.sinks:
-            sink.put(in_data)  #一直个 DuerOS类传数据，调用了dueros.put
+            sink.put(in_data)
+        if self.record:
+            self.recorddata.append(in_data)
         return None, pyaudio.paContinue
 
-
+    def recode(self):
+        # frames=[]
+        # for i in range(0, int(self.sample_rate / int(self.frames_size) * 5)):
+        #     data = self.stream.read(1024)
+        #     frames.append(data)
+        self.record=True
+        time.sleep(5)
+        self.record=False
+        wf = wave.open("test.wav", 'wb')
+        wf.setnchannels(self.channels)
+        wf.setsampwidth(self.pyaudio_instance.get_sample_size(pyaudio.paInt16))
+        wf.setframerate(self.sample_rate)
+        wf.writeframes(b''.join(self.recorddata))
+        wf.close()
+        self.recorddata.reverse()
+        self.ctl.recognize()

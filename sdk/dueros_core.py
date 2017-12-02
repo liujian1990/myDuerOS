@@ -11,6 +11,9 @@ import os
 import sys
 import tempfile
 import uuid
+import threading
+
+from threading import current_thread
 
 import requests
 
@@ -23,15 +26,19 @@ import datetime
 
 import hyper
 
+import sdk.configurate
+import sdk.sdk_config as sdk_config
+
 from sdk.interface.alerts import Alerts
 from sdk.interface.audio_player import AudioPlayer
 from sdk.interface.speaker import Speaker
 from sdk.interface.speech_recognizer import SpeechRecognizer
 from sdk.interface.speech_synthesizer import SpeechSynthesizer
 from sdk.interface.system import System
-import sdk.configurate
 
-logging.basicConfig(level=logging.ERROR)
+#logging.basicConfig(level=sdk_config.LOGGER_LEVEL)
+logging.basicConfig(level=logging.INFO)
+
 logger = logging.getLogger(__name__)
 
 
@@ -40,7 +47,8 @@ class DuerOSStateListner(object):
     DuerOS状态监听类
     '''
 
-    def __init__(self):
+    def __init__(self,mic):
+        self.mic=mic
         pass
 
     def on_listening(self):
@@ -49,7 +57,8 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在倾听..........')
-        print ('DuerOS状态]正在倾听..........')
+        print "[DuerOS状态]正在倾听........"
+        threading.Thread(target=self.mic.recode).start()
 
 
     def on_thinking(self):
@@ -58,7 +67,8 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在思考.........')
-        print ('[DuerOS状态]正在思考.........')
+        print "[DuerOS状态]正在思考........"
+
 
     def on_speaking(self):
         '''
@@ -66,7 +76,7 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]正在播放........')
-        print ('[DuerOS状态]正在播放........')
+        print '[DuerOS状态]正在播放........'
 
 
     def on_finished(self):
@@ -75,8 +85,7 @@ class DuerOSStateListner(object):
         :return:
         '''
         logging.info('[DuerOS状态]结束')
-        print ('[DuerOS状态]结束')
-
+        print '[DuerOS状态]结束'
 
 
 class DuerOS(object):
@@ -88,26 +97,26 @@ class DuerOS(object):
         Directive下发
     '''
 
-    def __init__(self, player):
+    def __init__(self, player,mic):
         '''
         类初始化
         :param player:播放器
         '''
         self.event_queue = queue.Queue()
-        self.speech_recognizer = SpeechRecognizer(self) #处理mic类的数据
+        self.speech_recognizer = SpeechRecognizer(self)
         self.speech_synthesizer = SpeechSynthesizer(self, player)
         self.audio_player = AudioPlayer(self, player)
         self.speaker = Speaker(self)
         self.alerts = Alerts(self, player)
         self.system = System(self)
 
-        self.state_listener = DuerOSStateListner()
+        self.state_listener = DuerOSStateListner(mic)
 
         # handle audio to speech recognizer
-        self.put = self.speech_recognizer.put #被mic类不断的放数据
+        self.put = self.speech_recognizer.put
 
         # listen() will trigger SpeechRecognizer's Recognize event
-        self.listen = self.speech_recognizer.recognize
+        # self.listen = self.speech_recognizer.recognize
 
         self.done = False
 
@@ -153,6 +162,13 @@ class DuerOS(object):
         :return:
         '''
         self.done = True
+
+    def listen(self):
+        '''
+        DuerOS进入语音识别状态
+        :return:
+        '''
+        self.speech_recognizer.recognize()
 
     def send_event(self, event, listener=None, attachment=None):
         '''
@@ -265,8 +281,7 @@ class DuerOS(object):
             json_part += json.dumps(metadata)
 
             conn.send(json_part.encode('utf-8'), final=False, stream_id=stream_id)
-           # print "[DuerOS-send-1]:", json.dumps(metadata, sort_keys=True, indent=4, separators=(',', ': '))
-
+           # print "[DuerOS-send-1]:",json.dumps(metadata, sort_keys=True, indent=4, separators=(',', ': '))
             if attachment:
                 attachment_header = '\r\n--{}\r\n'.format(eventchannel_boundary)
                 attachment_header += 'Content-Disposition: form-data; name="audio"\r\n'
@@ -275,8 +290,9 @@ class DuerOS(object):
 
                 # AVS_AUDIO_CHUNK_PREFERENCE = 320
                 for chunk in attachment:
+
                     conn.send(chunk, final=False, stream_id=stream_id)
-                   # print "[DuerOS-send-2]:chunk" #chunk
+                   # print "[DuerOS-send-2]:chunk" ,"thread:",threading.current_thread().getName()#chunk
 
                     # print '===============send(attachment.chunk)'
 
@@ -292,7 +308,7 @@ class DuerOS(object):
 
             end_part = '\r\n--{}--'.format(eventchannel_boundary)
             conn.send(end_part.encode('utf-8'), final=True, stream_id=stream_id)
-           # print "[DuerOS-send-3]:",end_part
+            #print "[DuerOS-send-3]:",end_part
 
             logger.info("wait for response")
             resp = conn.get_response(stream_id)
@@ -457,8 +473,8 @@ class DuerOS(object):
             name = self.__name_convert(name)
             if hasattr(self, namespace):
                 interface = getattr(self, namespace)
-                if type(name) == str:
-                    directive_func = getattr(interface, name, None)
+               # if type(name) == str:
+                directive_func = getattr(interface, name, None)
                 if directive_func:
                     directive_func(directive)
                 else:

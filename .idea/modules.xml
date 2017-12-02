@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Ligth/.idea/Ligth.iml" filepath="$PROJECT_DIR$/../Ligth/.idea/Ligth.iml" />
       <module fileurl="file://$PROJECT_DIR$/../gattlib/.idea/gattlib.iml" filepath="$PROJECT_DIR$/../gattlib/.idea/gattlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/myDuerOS.iml" filepath="$PROJECT_DIR$/.idea/myDuerOS.iml" />
       <module fileurl="file://$PROJECT_DIR$/../pybluez/.idea/pybluez.iml" filepath="$PROJECT_DIR$/../pybluez/.idea/pybluez.iml" />
